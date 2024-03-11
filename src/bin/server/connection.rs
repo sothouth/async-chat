@@ -13,6 +13,36 @@ use crate::group_table::GroupTable;
 
 pub async fn serve(socket:TcpStream,groups:Arc<GroupTable>)->ChatResult<()>{
     let outbound=Arc::new(Outbound::new(socket.clone()));
+
+    let reader=BufReader::new(socket);
+    let from_client=utils::receive_as_json(reader);
+    while let Some(request_result)=from_client.next().await{
+        let request=request_result?;
+
+        let result=match request{
+            FromClient::Join{group_name}=>{
+                let group=groups.get_or_create(group_name);
+                group.join(outbound.clone());
+                Ok(())
+            },
+            FromClient::Post { group_name, message } => {
+                match groups.get(&group_name) {
+                    Some(group) => {
+                        group.post(message);
+                        Ok(())
+                    },
+                    None=>{
+                        Err("Group not found".into())
+                    },
+                }
+            },
+        };
+        if let Err(err)=result{
+            let report=FromServer::Error(err.to_string());
+            outbound.send(report).await?;
+        }
+    }
+
     Ok(())
 }
 
