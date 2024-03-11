@@ -1,0 +1,10 @@
+[package]
+name = "async-chat"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+async-std = { version = "*", features = ["unstable"] }
+tokio = { version = "*", features = ["full"] }
+serde = { version = "*", features = ["derive", "rc"] }
+serde_json = { version = "*" }
