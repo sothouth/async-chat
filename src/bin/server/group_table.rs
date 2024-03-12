@@ -16,7 +16,7 @@ impl GroupTable {
             .lock()
             .unwrap()
             .entry(key.clone())
-            .or_insert_with(|| Arc::new(Group::new()))
+            .or_insert_with(|| Arc::new(Group::new(key)))
             .clone()
     }
 }
