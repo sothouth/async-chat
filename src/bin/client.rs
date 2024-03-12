@@ -27,23 +27,16 @@ fn parse_command(command: &str) -> Option<FromClient> {
     }
 }
 
-
-
-fn split_next_token(mut input:&str)->Option<(&str,&str)>{
-    input=input.trim_start();
-    if input.is_empty(){
+fn split_next_token(mut input: &str) -> Option<(&str, &str)> {
+    input = input.trim_start();
+    if input.is_empty() {
         return None;
     }
-    match input.find(char::is_whitespace){
-        Some(i)=>{
-            Some((&input[..i],&input[i..]))
-        },
-        None=>{
-            Some((input, ""))
-        },
+    match input.find(char::is_whitespace) {
+        Some(i) => Some((&input[..i], &input[i..])),
+        None => Some((input, "")),
     }
 }
-
 
 async fn send_commands(mut to_server: net::TcpStream) -> ChatResult<()> {
     println!(
