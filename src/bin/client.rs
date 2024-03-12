@@ -1,10 +1,8 @@
-use async_chat::utils::{self, ChatResult};
-use async_std::io;
-use async_std::net;
-use async_std::prelude::*;
-use async_std::task;
-
-use async_chat::{FromClient, FromServer};
+use async_chat::{
+    utils::{self, ChatResult},
+    FromClient, FromServer,
+};
+use async_std::{io, net, prelude::*, task};
 
 fn parse_command(command: &str) -> Option<FromClient> {
     let words: Vec<&str> = command
@@ -19,7 +17,7 @@ fn parse_command(command: &str) -> Option<FromClient> {
         "join" if words.len() == 2 => Some(FromClient::Join {
             group_name: words[1].to_owned().into(),
         }),
-        "post" if words.len() == 2 => Some(FromClient::Post {
+        "post" if words.len() == 3 => Some(FromClient::Post {
             group_name: words[1].to_owned().into(),
             message: words[2].to_owned().into(),
         }),

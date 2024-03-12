@@ -1,10 +1,10 @@
 use std::error::Error;
 
+use async_std::prelude::*;
+use serde::{de::DeserializeOwned, Serialize};
+
 pub type ChatError = Box<dyn Error + Send + Sync + 'static>;
 pub type ChatResult<T> = Result<T, ChatError>;
-
-use async_std::prelude::*;
-use serde::Serialize;
 
 pub async fn send_as_json<S, P>(outbound: &mut S, packet: &P) -> ChatResult<()>
 where
@@ -16,8 +16,6 @@ where
     outbound.write_all(json.as_bytes()).await?;
     Ok(())
 }
-
-use serde::de::DeserializeOwned;
 
 pub fn receive_as_json<S, P>(inbound: S) -> impl Stream<Item = ChatResult<P>>
 where
